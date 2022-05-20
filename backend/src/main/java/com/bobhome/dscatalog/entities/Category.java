@@ -22,6 +22,7 @@ public class Category implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
+	private String email;
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
@@ -32,9 +33,10 @@ public class Category implements Serializable{
 	public Category() {
 	}
 
-	public Category(Long id, String name) {
+	public Category(Long id, String name, String email) {
 		this.id = id;
 		this.name = name;
+		this.email = email;
 	}
 
 	public Long getId() {
@@ -53,6 +55,14 @@ public class Category implements Serializable{
 		this.name = name;
 	}
 	
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public Instant getCreatedAt() {
 		return createdAt;
 	}
