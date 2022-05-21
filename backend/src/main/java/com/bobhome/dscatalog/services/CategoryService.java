@@ -43,7 +43,6 @@ public class CategoryService {
 	public CategoryDTO insert(CategoryDTO dto) {
 		Category entity = new Category();
 		entity.setName(dto.getName());
-		entity.setEmail(dto.getEmail());
 		entity = repository.save(entity);
 		return new CategoryDTO(entity);
 		
@@ -54,7 +53,6 @@ public class CategoryService {
 		try {
 			Category entity = repository.getOne(id);
 			entity.setName(dto.getName());
-			entity.setEmail(dto.getEmail());
 			entity = repository.save(entity);
 			return new CategoryDTO(entity);
 		}
