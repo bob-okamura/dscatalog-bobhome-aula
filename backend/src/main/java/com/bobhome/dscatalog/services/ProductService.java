@@ -12,8 +12,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bobhome.dscatalog.dto.CategoryDTO;
 import com.bobhome.dscatalog.dto.ProductDTO;
+import com.bobhome.dscatalog.entities.Category;
 import com.bobhome.dscatalog.entities.Product;
+import com.bobhome.dscatalog.repositories.CategoryRepository;
 import com.bobhome.dscatalog.repositories.ProductRepository;
 import com.bobhome.dscatalog.services.exceptions.DataBaseException;
 import com.bobhome.dscatalog.services.exceptions.ResourceNotFoundException;
@@ -26,6 +29,9 @@ public class ProductService {
 	@Autowired
 	private ProductRepository repository;
 	
+	@Autowired
+	private CategoryRepository categoryRepository;
+	
 	@Transactional(readOnly = true)
 	public Page<ProductDTO> findAllPaged(PageRequest pageRequest){
 		Page<Product> list = repository.findAll(pageRequest);
@@ -35,18 +41,14 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public ProductDTO findById(Long id) {
 		Optional<Product> obj = repository.findById(id);
-		Product entity = obj.orElseThrow(() -> new EntityNotFoundException("Entidade não encontrada!"));
+		Product entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entidade não encontrada!"));
 		return new ProductDTO(entity, entity.getCategories());
 	}
 
 	@Transactional
 	public ProductDTO insert(ProductDTO dto) {
 		Product entity = new Product();
-		entity.setName(dto.getName());
-		entity.setDescription(dto.getDescription());
-		entity.setPrice(dto.getPrice());
-		entity.setImgUrl(dto.getImgUrl());
-		entity.setMoment(dto.getMoment());
+		copyDtoToEntity(dto, entity);
 		entity = repository.save(entity);
 		return new ProductDTO(entity);
 		
@@ -56,7 +58,7 @@ public class ProductService {
 	public ProductDTO update(Long id, ProductDTO dto) {
 		try {
 			Product entity = repository.getOne(id);
-			entity.setName(dto.getName());
+			copyDtoToEntity(dto, entity);
 			entity = repository.save(entity);
 			return new ProductDTO(entity);
 		}
@@ -75,6 +77,20 @@ public class ProductService {
 		}
 		catch(DataAccessException e) {
 			throw new DataBaseException("Integrity violation");
+		}
+	}
+	
+	private void copyDtoToEntity(ProductDTO dto, Product entity) {
+		entity.setName(dto.getName());
+		entity.setDescription(dto.getDescription());
+		entity.setPrice(dto.getPrice());
+		entity.setImgUrl(dto.getImgUrl());
+		entity.setMoment(dto.getMoment());	
+		
+		entity.getCategories().clear();
+		for(CategoryDTO catDto : dto.getCategories()) {
+			Category category = categoryRepository.getOne(catDto.getId());
+			entity.getCategories().add(category);
 		}
 	}
 

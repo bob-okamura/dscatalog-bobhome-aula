@@ -43,17 +43,17 @@ public class ProductDTO implements Serializable{
 	}
 	
 	//Lambida
-	/*public ProductDTO(Product entity, Set<Category> categories) {
+	public ProductDTO(Product entity, Set<Category> categories) {
 		this(entity);
 		categories.forEach(cat -> this.categories.add(new CategoryDTO(cat)));
-	}*/
+	}
 	
-	public ProductDTO(Product entity, Set<Category> categories) {
+	/*public ProductDTO(Product entity, Set<Category> categories) {
 		this(entity);
 		for(Category cat : categories) {
 			this.categories.add(new CategoryDTO(cat));
 		}
-	}
+	}*/
 
 	public Long getId() {
 		return id;
